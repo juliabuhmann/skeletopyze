@@ -53,6 +53,8 @@ void init_numpy() {
 Skeleton skeletonize_ndarray_params(PyObject* array, const Skeletonize::Parameters& parameters) {
 
 	ExplicitVolume<int> volume = volumeFromNumpyArray<int>(array);
+	
+	
 
 	std::cout << "creating graph volume" << std::endl;
 	GraphVolume graphVolume(volume);
@@ -63,6 +65,23 @@ Skeleton skeletonize_ndarray_params(PyObject* array, const Skeletonize::Paramete
 	std::cout << "getting skeleton" << std::endl;
 	return skeletonizer.getSkeleton();
 }
+
+Skeleton skeletonize_ndarray_params_res(PyObject* array, util::point<float, 3> res, const Skeletonize::Parameters& parameters) {
+
+	ExplicitVolume<int> volume = volumeFromNumpyArray<int>(array);
+	volume.setResolution(res);	
+	std::cout << "resolution set to z:" << res.z() << " y: "<< res.y() << " x: " << res.x() <<  std::endl;
+
+	std::cout << "creating graph volume" << std::endl;
+	GraphVolume graphVolume(volume);
+
+	std::cout << "creating skeletonizer" << std::endl;
+	Skeletonize skeletonizer(graphVolume, parameters);
+
+	std::cout << "getting skeleton" << std::endl;
+	return skeletonizer.getSkeleton();
+}
+
 
 Skeleton skeletonize_ndarray(PyObject* array) {
 
@@ -222,6 +241,8 @@ BOOST_PYTHON_MODULE(skeletopyze) {
 	// skeletonize()
 	boost::python::def("get_skeleton_graph", skeletonize_ndarray);
 	boost::python::def("get_skeleton_graph", skeletonize_ndarray_params);
+	boost::python::def("get_skeleton_graph", skeletonize_ndarray_params_res);
+
 
 	boost::python::def("volumeFromIntNumpyArray", volumeFromNumpyArray<int>);
 }
